@@ -33,9 +33,9 @@ const MONTH_NAMES = [
 ] as const;
 
 const PILL_COLORS: Record<string, string> = {
-  Push: "bg-bg-surface-elevated text-text-primary",
-  Pull: "bg-bg-surface-elevated text-text-primary",
-  Legs: "bg-bg-surface-elevated text-text-primary",
+  Push: "bg-move-red-track text-move-red",
+  Pull: "bg-move-red-track text-move-red",
+  Legs: "bg-move-red-track text-move-red",
   Rest: "bg-move-red-track text-move-red",
 };
 
