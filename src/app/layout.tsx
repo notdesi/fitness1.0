@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} h-full`}>
       <body className="min-h-full flex flex-col">
         <Providers>
-          <div className="flex flex-1 flex-col">{children}</div>
+          <div className="flex flex-1 flex-col pb-20">{children}</div>
           <BottomNav />
         </Providers>
       </body>

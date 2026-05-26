@@ -90,24 +90,26 @@ export default function Home() {
   const panelOpen = editingWorkout !== null;
 
   return (
-    <main className="flex flex-1 flex-col bg-bg-canvas px-5">
-      <header className="flex items-center justify-center pt-4 pb-3">
-        <StreakPill days={7} />
-      </header>
+    <main className="flex flex-1 flex-col bg-bg-canvas">
+      <div className="sticky top-0 z-10 bg-bg-canvas px-5 pb-4">
+        <header className="flex items-center justify-center pt-4 pb-3">
+          <StreakPill days={7} />
+        </header>
 
-      <div className="mt-2 flex items-start justify-between">
-        <div>
-          <h1 className="font-title-lg text-text-primary">{dayName}</h1>
-          <p className="font-caption text-text-secondary mt-0.5">{dateLabel}</p>
+        <div className="mt-2 flex items-start justify-between">
+          <div>
+            <h1 className="font-title-lg text-text-primary">{dayName}</h1>
+            <p className="font-caption text-text-secondary mt-0.5">{dateLabel}</p>
+          </div>
+          <span
+            className={`mt-1 rounded-full px-3.5 py-1 font-label ${PILL_COLORS[todayType]}`}
+          >
+            {todayType}
+          </span>
         </div>
-        <span
-          className={`mt-1 rounded-full px-3.5 py-1 font-label ${PILL_COLORS[todayType]}`}
-        >
-          {todayType}
-        </span>
       </div>
 
-      <div className="mt-6 flex flex-col gap-3">
+      <div className="px-5 mt-2 flex flex-col gap-3">
         {todayType === "Rest" ? (
           <div className="rounded-2xl bg-bg-surface px-4 py-6 text-center">
             <p className="font-label text-text-secondary">Rest Day</p>

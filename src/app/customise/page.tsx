@@ -98,35 +98,37 @@ export default function CustomisePage() {
   }
 
   return (
-    <main className="flex flex-1 flex-col bg-bg-canvas px-5">
-      <div className="mt-6 flex items-center justify-between">
-        <h1 className="font-title-lg text-text-primary">Customise</h1>
-        <button
-          onClick={() => setPanelOpen(true)}
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-bg-surface-elevated"
-        >
-          <Plus size={20} weight="bold" className="text-text-primary" />
-        </button>
-      </div>
-
-      <div className="mt-4 flex gap-2">
-        {ALL_CATEGORIES.map((cat) => (
+    <main className="flex flex-1 flex-col bg-bg-canvas">
+      <div className="sticky top-0 z-10 bg-bg-canvas px-5 pb-4">
+        <div className="mt-6 flex items-center justify-between">
+          <h1 className="font-title-lg text-text-primary">Customise</h1>
           <button
-            key={cat}
-            onClick={() => setActive(cat)}
-            className={`rounded-full px-4 py-1.5 font-label transition-colors ${
-              active === cat
-                ? "bg-text-primary text-bg-canvas"
-                : "bg-bg-surface-elevated text-text-secondary"
-            }`}
+            onClick={() => setPanelOpen(true)}
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-bg-surface-elevated"
           >
-            {cat}
+            <Plus size={20} weight="bold" className="text-text-primary" />
           </button>
-        ))}
+        </div>
+
+        <div className="mt-4 flex gap-2">
+          {ALL_CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActive(cat)}
+              className={`rounded-full px-4 py-1.5 font-label transition-colors ${
+                active === cat
+                  ? "bg-text-primary text-bg-canvas"
+                  : "bg-bg-surface-elevated text-text-secondary"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Workout cards */}
-      <div className="mt-6 flex flex-col gap-3">
+      <div className="px-5 mt-2 flex flex-col gap-3">
         {filteredWorkouts.map((workout) => (
           <div
             key={workout.id}

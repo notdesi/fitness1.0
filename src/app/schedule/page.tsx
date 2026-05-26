@@ -16,12 +16,14 @@ export default function SchedulePage() {
   const { schedule, setDaySchedule } = useSchedule();
 
   return (
-    <main className="flex flex-1 flex-col bg-bg-canvas px-5">
-      <div className="mt-6">
-        <h1 className="font-title-lg text-text-primary">Schedule</h1>
+    <main className="flex flex-1 flex-col bg-bg-canvas">
+      <div className="sticky top-0 z-10 bg-bg-canvas px-5 pb-4">
+        <div className="mt-6">
+          <h1 className="font-title-lg text-text-primary">Schedule</h1>
+        </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-2">
+      <div className="px-5 mt-2 flex flex-col gap-2">
         {DAYS.map((day) => (
           <div
             key={day}
