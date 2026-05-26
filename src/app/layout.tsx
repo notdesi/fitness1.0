@@ -30,9 +30,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="min-h-full flex flex-col">
+      <body className="h-full overflow-hidden flex flex-col">
         <Providers>
-          <div className="flex flex-1 flex-col pb-20">{children}</div>
+          <div className="flex-1 overflow-y-auto pb-20">{children}</div>
           <BottomNav />
         </Providers>
       </body>
