@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { X, CheckCircle } from "@phosphor-icons/react";
 import { StreakPill } from "@/components/ui/StreakPill";
 import { useSchedule } from "@/context/ScheduleContext";
 import { useWorkouts, type Workout, type RecordType } from "@/context/WorkoutsContext";
+import { useStreak } from "@/context/StreakContext";
 
 const DAY_NAMES = [
   "Sunday",
@@ -50,6 +51,7 @@ export default function Home() {
   const { dayName, dateLabel } = getToday();
   const { todayType } = useSchedule();
   const { workouts, updateRecord } = useWorkouts();
+  const { streak, toggleComplete, isComplete } = useStreak();
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const [recordType, setRecordType] = useState<RecordType>("pr");
   const [recordInput, setRecordInput] = useState("");
@@ -93,7 +95,7 @@ export default function Home() {
     <main className="flex flex-1 flex-col bg-bg-canvas">
       <div className="sticky top-0 z-10 bg-bg-canvas px-5 pb-4">
         <header className="flex items-center justify-center pt-4 pb-3">
-          <StreakPill days={7} />
+          <StreakPill days={streak} />
         </header>
 
         <div className="mt-2 flex items-start justify-between">
@@ -125,39 +127,65 @@ export default function Home() {
             </p>
           </div>
         ) : (
-          todayWorkouts.map((workout) => (
-            <div
-              key={workout.id}
-              className="flex items-center justify-between rounded-2xl bg-bg-surface px-4 py-4"
-            >
-              <div className="flex flex-col gap-1">
-                <span className="font-label text-text-primary">
-                  {workout.name}
-                </span>
-                {workout.muscles.length > 0 && (
-                  <p className="font-caption text-text-secondary">
-                    {workout.muscles.join(", ")}
-                  </p>
-                )}
-              </div>
-
-              <button
-                onClick={() => openRecordPanel(workout)}
-                className="flex flex-col items-end"
+          todayWorkouts.map((workout) => {
+            const done = isComplete(workout.id);
+            return (
+              <div
+                key={workout.id}
+                className={`flex items-center gap-3 rounded-2xl bg-bg-surface px-4 py-4 transition-opacity ${
+                  done ? "opacity-50" : ""
+                }`}
               >
-                <span className="font-title-md text-move-red">
-                  {(workout.recordType === "reps" ? workout.reps : workout.pr) > 0
-                    ? workout.recordType === "reps"
-                      ? workout.reps
-                      : workout.pr
-                    : "–"}
-                </span>
-                <span className="font-unit text-move-red/60">
-                  {workout.recordType === "reps" ? "REPS" : "PR kg"}
-                </span>
-              </button>
-            </div>
-          ))
+                <button
+                  onClick={() => toggleComplete(workout.id)}
+                  className="shrink-0"
+                >
+                  <CheckCircle
+                    size={28}
+                    weight={done ? "fill" : "regular"}
+                    className={done ? "text-move-red" : "text-text-tertiary"}
+                  />
+                </button>
+
+                <div className="flex flex-1 items-center justify-between">
+                  <div className="flex flex-col gap-1">
+                    <span
+                      className={`font-label ${
+                        done
+                          ? "text-text-secondary line-through"
+                          : "text-text-primary"
+                      }`}
+                    >
+                      {workout.name}
+                    </span>
+                    {workout.muscles.length > 0 && (
+                      <p className="font-caption text-text-secondary">
+                        {workout.muscles.join(", ")}
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => openRecordPanel(workout)}
+                    className="flex flex-col items-end"
+                  >
+                    <span className="font-title-md text-move-red">
+                      {(workout.recordType === "reps"
+                        ? workout.reps
+                        : workout.pr) > 0
+                        ? workout.recordType === "reps"
+                          ? workout.reps
+                          : workout.pr
+                        : "–"}
+                    </span>
+                    <span className="font-unit text-move-red/60">
+                      {workout.recordType === "reps" ? "REPS" : "PR kg"}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
 
@@ -228,6 +256,24 @@ export default function Home() {
           placeholder="0"
           className="w-full rounded-xl bg-bg-surface-elevated px-4 py-3 font-body text-text-primary placeholder:text-text-tertiary outline-none focus:ring-1 focus:ring-text-tertiary"
         />
+  const { todayType } = useSchedule();
+
+  return (
+    <main className="flex flex-1 flex-col bg-bg-canvas px-5">
+      <header className="flex items-center justify-center pt-4 pb-3">
+        <StreakPill days={7} />
+      </header>
+
+      <div className="mt-2 flex items-start justify-between">
+        <div>
+          <h1 className="font-title-lg text-text-primary">{dayName}</h1>
+          <p className="font-caption text-text-secondary mt-0.5">{dateLabel}</p>
+        </div>
+        <span
+          className={`mt-1 rounded-full px-3.5 py-1 font-label ${PILL_COLORS[todayType]}`}
+        >
+          {todayType}
+        </span>
       </div>
     </main>
   );

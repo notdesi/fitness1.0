@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Providers } from "@/components/layout/Providers";
+import { Providers } from "@/components/layout/Providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -30,11 +31,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="min-h-full flex flex-col">
         <Providers>
           <div className="flex flex-1 flex-col pb-20">{children}</div>
           <BottomNav />
         </Providers>
+        <BottomNav />
       </body>
     </html>
   );
