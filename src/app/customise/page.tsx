@@ -8,9 +8,9 @@ const CATEGORIES = ["Push", "Pull", "Legs"] as const;
 const ALL_CATEGORIES = ["All", ...CATEGORIES] as const;
 
 const MUSCLES: Record<string, string[]> = {
-  Push: ["Chest", "Triceps", "Shoulder"],
+  Push: ["Chest", "Triceps"],
   Pull: ["Back", "Biceps", "Forearms"],
-  Legs: ["Leg", "Abs"],
+  Legs: ["Leg", "Abs", "Shoulder"],
 };
 
 export default function CustomisePage() {
@@ -160,7 +160,7 @@ export default function CustomisePage() {
             {menuOpenId === workout.id && (
               <div
                 ref={menuRef}
-                className="absolute right-4 top-12 z-30 min-w-[140px] rounded-xl bg-bg-surface-elevated py-1 shadow-lg border border-white/[0.08]"
+                className="absolute right-4 bottom-12 z-[55] min-w-[140px] rounded-xl bg-bg-surface-elevated py-1 shadow-lg border border-white/[0.08]"
               >
                 <button
                   onClick={() => handleEdit(workout)}
