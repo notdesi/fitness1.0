@@ -132,7 +132,7 @@ export default function CustomisePage() {
         {filteredWorkouts.map((workout) => (
           <div
             key={workout.id}
-            className="relative flex items-center justify-between rounded-2xl bg-bg-surface px-4 py-4 press"
+            className="relative flex items-center justify-between rounded-2xl bg-bg-surface px-4 py-4"
           >
             <div className="flex flex-col gap-1">
               <span className="font-label text-text-primary">
@@ -145,7 +145,7 @@ export default function CustomisePage() {
               </span>
             </div>
             <button
-              className="p-1"
+              className="p-1 press-sm"
               onClick={() =>
                 setMenuOpenId(menuOpenId === workout.id ? null : workout.id)
               }
