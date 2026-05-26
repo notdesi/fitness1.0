@@ -32,18 +32,11 @@ const MONTH_NAMES = [
   "Dec",
 ] as const;
 
-const PILL_COLORS: Record<string, string> = {
-  Push: "bg-move-red-track text-move-red",
-  Pull: "bg-move-red-track text-move-red",
-  Legs: "bg-move-red-track text-move-red",
-  Rest: "bg-move-red-track text-move-red",
-};
-
 function getToday() {
   const now = new Date();
   return {
     dayName: DAY_NAMES[now.getDay()],
-    dateLabel: `${MONTH_NAMES[now.getMonth()]} ${now.getDate()}`,
+    dateLabel: `${DAY_NAMES[now.getDay()]}, ${MONTH_NAMES[now.getMonth()]} ${now.getDate()}`,
   };
 }
 
@@ -98,16 +91,9 @@ export default function Home() {
           <StreakPill days={streak} />
         </header>
 
-        <div className="mt-2 flex items-start justify-between">
-          <div>
-            <h1 className="font-title-lg text-text-primary">{dayName}</h1>
-            <p className="font-caption text-text-secondary mt-0.5">{dateLabel}</p>
-          </div>
-          <span
-            className={`mt-1 rounded-full px-3.5 py-1 font-label ${PILL_COLORS[todayType]}`}
-          >
-            {todayType}
-          </span>
+        <div className="mt-2">
+          <h1 className="font-title-lg text-text-primary">{todayType}</h1>
+          <p className="font-caption text-text-secondary mt-0.5">{dateLabel}</p>
         </div>
       </div>
 

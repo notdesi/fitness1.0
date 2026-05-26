@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} h-full`}>
       <body className="h-full overflow-hidden flex flex-col">
         <Providers>
-          <div className="flex-1 overflow-y-auto pb-20">{children}</div>
+          <div data-scroll-container className="flex-1 overflow-y-auto pb-20">{children}</div>
           <BottomNav />
         </Providers>
         <BottomNav />
