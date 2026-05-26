@@ -132,18 +132,18 @@ export default function Home() {
             return (
               <div
                 key={workout.id}
-                className={`flex items-center gap-3 rounded-2xl bg-bg-surface px-4 py-4 transition-opacity ${
+                className={`flex items-center gap-3 rounded-2xl bg-bg-surface px-4 py-4 transition-all duration-200 ${
                   done ? "opacity-50" : ""
                 }`}
               >
                 <button
                   onClick={() => toggleComplete(workout.id)}
-                  className="shrink-0"
+                  className="shrink-0 press-sm"
                 >
                   <CheckCircle
                     size={28}
                     weight={done ? "fill" : "regular"}
-                    className={done ? "text-move-red" : "text-text-tertiary"}
+                    className={`transition-colors duration-200 ${done ? "text-move-red" : "text-text-tertiary"}`}
                   />
                 </button>
 
@@ -167,7 +167,7 @@ export default function Home() {
 
                   <button
                     onClick={() => openRecordPanel(workout)}
-                    className="flex flex-col items-end"
+                    className="flex flex-col items-end press-sm"
                   >
                     <span className="font-title-md text-move-red">
                       {(workout.recordType === "reps"
@@ -232,7 +232,7 @@ export default function Home() {
             <button
               key={type}
               onClick={() => handleTypeChange(type)}
-              className={`rounded-full px-4 py-1.5 font-label transition-colors ${
+              className={`rounded-full px-4 py-1.5 font-label transition-all duration-200 press-sm ${
                 recordType === type
                   ? "bg-text-primary text-bg-canvas"
                   : "bg-bg-surface-elevated text-text-secondary"

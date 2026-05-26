@@ -103,8 +103,8 @@ export default function CustomisePage() {
         <div className="mt-6 flex items-center justify-between">
           <h1 className="font-title-lg text-text-primary">Customise</h1>
           <button
-            onClick={() => setPanelOpen(true)}
-            className="flex items-center justify-center w-9 h-9 rounded-full bg-bg-surface-elevated"
+          onClick={() => setPanelOpen(true)}
+          className="flex items-center justify-center w-9 h-9 rounded-full bg-bg-surface-elevated press-sm"
           >
             <Plus size={20} weight="bold" className="text-text-primary" />
           </button>
@@ -114,12 +114,12 @@ export default function CustomisePage() {
           {ALL_CATEGORIES.map((cat) => (
             <button
               key={cat}
-              onClick={() => setActive(cat)}
-              className={`rounded-full px-4 py-1.5 font-label transition-colors ${
-                active === cat
-                  ? "bg-text-primary text-bg-canvas"
-                  : "bg-bg-surface-elevated text-text-secondary"
-              }`}
+            onClick={() => setActive(cat)}
+            className={`rounded-full px-4 py-1.5 font-label transition-all duration-200 press-sm ${
+              active === cat
+                ? "bg-text-primary text-bg-canvas"
+                : "bg-bg-surface-elevated text-text-secondary"
+            }`}
             >
               {cat}
             </button>
@@ -132,7 +132,7 @@ export default function CustomisePage() {
         {filteredWorkouts.map((workout) => (
           <div
             key={workout.id}
-            className="relative flex items-center justify-between rounded-2xl bg-bg-surface px-4 py-4"
+            className="relative flex items-center justify-between rounded-2xl bg-bg-surface px-4 py-4 press"
           >
             <div className="flex flex-col gap-1">
               <span className="font-label text-text-primary">
@@ -235,7 +235,7 @@ export default function CustomisePage() {
             <button
               key={cat}
               onClick={() => handleCategoryChange(cat)}
-              className={`rounded-full px-4 py-1.5 font-label transition-colors ${
+              className={`rounded-full px-4 py-1.5 font-label transition-all duration-200 press-sm ${
                 selectedCategory === cat
                   ? "bg-text-primary text-bg-canvas"
                   : "bg-bg-surface-elevated text-text-secondary"
@@ -255,7 +255,7 @@ export default function CustomisePage() {
             <button
               key={muscle}
               onClick={() => toggleMuscle(muscle)}
-              className={`rounded-full px-4 py-1.5 font-label transition-colors ${
+              className={`rounded-full px-4 py-1.5 font-label transition-all duration-200 press-sm ${
                 selectedMuscles.includes(muscle)
                   ? "bg-text-primary text-bg-canvas"
                   : "bg-bg-surface-elevated text-text-secondary"

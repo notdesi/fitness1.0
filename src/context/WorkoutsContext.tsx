@@ -4,6 +4,12 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from "
 
 export type RecordType = "pr" | "reps";
 
+export interface RecordHistoryEntry {
+  date: string;
+  type: RecordType;
+  value: number;
+}
+
 export interface Workout {
   id: number;
   name: string;
@@ -20,9 +26,11 @@ interface WorkoutsContextValue {
   updateWorkout: (id: number, data: Omit<Workout, "id">) => void;
   updateRecord: (id: number, recordType: RecordType, value: number) => void;
   deleteWorkout: (id: number) => void;
+  getHistory: (workoutId: number) => RecordHistoryEntry[];
 }
 
 const STORAGE_KEY = "fitness-workouts";
+const HISTORY_KEY = "fitness-record-history";
 
 const WorkoutsContext = createContext<WorkoutsContextValue | null>(null);
 
@@ -30,6 +38,7 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [nextId, setNextId] = useState(1);
   const [loaded, setLoaded] = useState(false);
+  const [history, setHistory] = useState<Record<number, RecordHistoryEntry[]>>({});
 
   useEffect(() => {
     try {
@@ -47,6 +56,10 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
         setNextId(maxId + 1);
       }
     } catch {}
+    try {
+      const storedHistory = localStorage.getItem(HISTORY_KEY);
+      if (storedHistory) setHistory(JSON.parse(storedHistory));
+    } catch {}
     setLoaded(true);
   }, []);
 
@@ -55,6 +68,12 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(workouts));
     }
   }, [workouts, loaded]);
+
+  useEffect(() => {
+    if (loaded) {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+  }, [history, loaded]);
 
   function addWorkout(data: Omit<Workout, "id">) {
     setWorkouts((prev) => [...prev, { ...data, id: nextId }]);
@@ -75,14 +94,27 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
           : w
       )
     );
+    const entry: RecordHistoryEntry = {
+      date: new Date().toISOString(),
+      type: recordType,
+      value,
+    };
+    setHistory((prev) => ({
+      ...prev,
+      [id]: [...(prev[id] ?? []), entry],
+    }));
   }
 
   function deleteWorkout(id: number) {
     setWorkouts((prev) => prev.filter((w) => w.id !== id));
   }
 
+  function getHistory(workoutId: number): RecordHistoryEntry[] {
+    return history[workoutId] ?? [];
+  }
+
   return (
-    <WorkoutsContext.Provider value={{ workouts, addWorkout, updateWorkout, updateRecord, deleteWorkout }}>
+    <WorkoutsContext.Provider value={{ workouts, addWorkout, updateWorkout, updateRecord, deleteWorkout, getHistory }}>
       {children}
     </WorkoutsContext.Provider>
   );

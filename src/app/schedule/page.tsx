@@ -36,7 +36,7 @@ export default function SchedulePage() {
                 <button
                   key={opt}
                   onClick={() => setDaySchedule(day, opt)}
-                  className={`rounded-full px-3.5 py-1 font-caption transition-colors ${
+                  className={`rounded-full px-3.5 py-1 font-caption transition-all duration-200 press-sm ${
                     schedule[day] === opt
                       ? OPTION_COLORS[opt]
                       : "bg-bg-surface-elevated text-text-tertiary"

@@ -35,6 +35,7 @@ export default function RootLayout({
           <div className="flex-1 overflow-y-auto pb-20">{children}</div>
           <BottomNav />
         </Providers>
+        <BottomNav />
       </body>
     </html>
   );
