@@ -256,24 +256,6 @@ export default function Home() {
           placeholder="0"
           className="w-full rounded-xl bg-bg-surface-elevated px-4 py-3 font-body text-text-primary placeholder:text-text-tertiary outline-none focus:ring-1 focus:ring-text-tertiary"
         />
-  const { todayType } = useSchedule();
-
-  return (
-    <main className="flex flex-1 flex-col bg-bg-canvas px-5">
-      <header className="flex items-center justify-center pt-4 pb-3">
-        <StreakPill days={7} />
-      </header>
-
-      <div className="mt-2 flex items-start justify-between">
-        <div>
-          <h1 className="font-title-lg text-text-primary">{dayName}</h1>
-          <p className="font-caption text-text-secondary mt-0.5">{dateLabel}</p>
-        </div>
-        <span
-          className={`mt-1 rounded-full px-3.5 py-1 font-label ${PILL_COLORS[todayType]}`}
-        >
-          {todayType}
-        </span>
       </div>
     </main>
   );
