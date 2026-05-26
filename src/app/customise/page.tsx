@@ -62,10 +62,15 @@ export default function CustomisePage() {
       muscles: [...selectedMuscles],
     };
     if (editingWorkout) {
-      updateWorkout(editingWorkout.id, data);
+      updateWorkout(editingWorkout.id, {
+        ...data,
+        pr: editingWorkout.pr,
+        reps: editingWorkout.reps,
+        recordType: editingWorkout.recordType,
+      });
       setEditingWorkout(null);
     } else {
-      addWorkout(data);
+      addWorkout({ ...data, pr: 0, reps: 0, recordType: "pr" });
     }
     setPanelOpen(false);
     setWorkoutName("");

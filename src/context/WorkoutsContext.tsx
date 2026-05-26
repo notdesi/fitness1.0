@@ -57,10 +57,7 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
   }, [workouts, loaded]);
 
   function addWorkout(data: Omit<Workout, "id">) {
-    setWorkouts((prev) => [
-      ...prev,
-      { pr: 0, reps: 0, recordType: "pr" as RecordType, ...data, id: nextId },
-    ]);
+    setWorkouts((prev) => [...prev, { ...data, id: nextId }]);
     setNextId((n) => n + 1);
   }
 
