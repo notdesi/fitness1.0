@@ -20,16 +20,28 @@ interface StreakContextValue {
   toggleComplete: (id: number) => void;
   isComplete: (id: number) => boolean;
   allDone: boolean;
+  hasSkippedToday: boolean;
+  markSkipped: () => void;
 }
 
 const STORAGE_KEY = "fitness-completions";
+const SKIPPED_KEY = "fitness-skipped-dates";
 
 function toDateStr(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function calcStreak(entries: CompletionEntry[], today: string, todayAllDone: boolean): number {
+function calcStreak(
+  entries: CompletionEntry[],
+  skippedDates: string[],
+  today: string,
+  todayAllDone: boolean,
+  todaySkipped: boolean
+): number {
+  if (todaySkipped) return 0;
+
   const completedDates = new Set(entries.map((e) => e.date));
+  const skipped = new Set(skippedDates);
   let streak = 0;
   const d = new Date(today + "T00:00:00");
 
@@ -41,6 +53,7 @@ function calcStreak(entries: CompletionEntry[], today: string, todayAllDone: boo
   }
 
   while (completedDates.has(toDateStr(d))) {
+    if (skipped.has(toDateStr(d))) break;
     streak++;
     d.setDate(d.getDate() - 1);
   }
@@ -60,6 +73,7 @@ export function StreakProvider({
   isRestDay: boolean;
 }) {
   const [entries, setEntries] = useState<CompletionEntry[]>([]);
+  const [skippedDates, setSkippedDates] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
   const today = toDateStr(new Date());
 
@@ -68,12 +82,20 @@ export function StreakProvider({
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) setEntries(JSON.parse(stored));
     } catch {}
+    try {
+      const storedSkipped = localStorage.getItem(SKIPPED_KEY);
+      if (storedSkipped) setSkippedDates(JSON.parse(storedSkipped));
+    } catch {}
     setLoaded(true);
   }, []);
 
   useEffect(() => {
     if (loaded) localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
   }, [entries, loaded]);
+
+  useEffect(() => {
+    if (loaded) localStorage.setItem(SKIPPED_KEY, JSON.stringify(skippedDates));
+  }, [skippedDates, loaded]);
 
   const todayEntry = entries.find((e) => e.date === today);
   const completedIds = todayEntry?.completedIds ?? [];
@@ -116,11 +138,32 @@ export function StreakProvider({
     [completedIds]
   );
 
-  const streak = calcStreak(entries, today, allDone);
+  const hasSkippedToday = skippedDates.includes(today);
+
+  const markSkipped = useCallback(() => {
+    setSkippedDates((prev) => (prev.includes(today) ? prev : [...prev, today]));
+    setEntries((prev) => prev.filter((e) => e.date !== today));
+  }, [today]);
+
+  const streak = calcStreak(
+    entries,
+    skippedDates,
+    today,
+    allDone,
+    hasSkippedToday
+  );
 
   return (
     <StreakContext.Provider
-      value={{ streak, completedIds, toggleComplete, isComplete, allDone }}
+      value={{
+        streak,
+        completedIds,
+        toggleComplete,
+        isComplete,
+        allDone,
+        hasSkippedToday,
+        markSkipped,
+      }}
     >
       {children}
     </StreakContext.Provider>

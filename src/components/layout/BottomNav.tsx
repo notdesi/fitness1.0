@@ -1,6 +1,11 @@
 "use client";
 
-import { Barbell, SlidersHorizontal, CalendarBlank } from "@phosphor-icons/react";
+import {
+  Barbell,
+  SlidersHorizontal,
+  CalendarBlank,
+  UserCircle,
+} from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -8,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/", label: "Workout", icon: Barbell },
   { href: "/schedule", label: "Schedule", icon: CalendarBlank },
   { href: "/customise", label: "Customise", icon: SlidersHorizontal },
+  { href: "/account", label: "Account", icon: UserCircle },
 ] as const;
 
 export function BottomNav() {

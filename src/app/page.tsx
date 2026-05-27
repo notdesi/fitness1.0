@@ -41,13 +41,15 @@ function getToday() {
 }
 
 export default function Home() {
-  const { dayName, dateLabel } = getToday();
-  const { todayType } = useSchedule();
+  const { dateLabel } = getToday();
+  const { todayType, skipToday, isRestDay } = useSchedule();
   const { workouts, updateRecord } = useWorkouts();
-  const { streak, toggleComplete, isComplete } = useStreak();
+  const { streak, toggleComplete, isComplete, hasSkippedToday, markSkipped } =
+    useStreak();
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const [recordType, setRecordType] = useState<RecordType>("pr");
   const [recordInput, setRecordInput] = useState("");
+  const [confirmSkip, setConfirmSkip] = useState(false);
 
   const todayWorkouts =
     todayType === "Rest"
@@ -82,18 +84,25 @@ export default function Home() {
     closePanel();
   }
 
+  function handleSkip() {
+    skipToday();
+    markSkipped();
+    setConfirmSkip(false);
+  }
+
   const panelOpen = editingWorkout !== null;
 
   return (
     <main className="flex flex-1 flex-col bg-bg-canvas">
-      <div className="sticky top-0 z-10 bg-bg-canvas px-5 pb-4">
-        <header className="flex items-center justify-center pt-4 pb-3">
-          <StreakPill days={streak} />
-        </header>
-
-        <div className="mt-2">
-          <h1 className="font-title-lg text-text-primary">{todayType}</h1>
-          <p className="font-caption text-text-secondary mt-0.5">{dateLabel}</p>
+      <div className="sticky top-0 z-10 bg-bg-canvas px-5 pb-4 pt-6">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="font-title-lg text-text-primary">{todayType}</h1>
+            <p className="font-caption text-text-secondary mt-0.5">{dateLabel}</p>
+          </div>
+          <div className="shrink-0 pt-1">
+            <StreakPill days={streak} />
+          </div>
         </div>
       </div>
 
@@ -174,6 +183,48 @@ export default function Home() {
           })
         )}
       </div>
+
+      {!isRestDay && !hasSkippedToday && (
+        <div className="px-5 mt-6 pb-6">
+          {confirmSkip ? (
+            <div className="rounded-2xl bg-bg-surface px-4 py-4 flex flex-col gap-3">
+              <p className="font-caption text-text-secondary">
+                Skip today&apos;s workout? Your streak will reset and your
+                schedule will shift.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setConfirmSkip(false)}
+                  className="flex-1 rounded-xl bg-bg-surface-elevated py-2.5 font-label text-text-secondary press-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSkip}
+                  className="flex-1 rounded-xl bg-move-red-track py-2.5 font-label text-move-red press-sm"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmSkip(true)}
+              className="w-full rounded-xl py-2.5 font-label text-text-tertiary press-sm"
+            >
+              Skip workout
+            </button>
+          )}
+        </div>
+      )}
+
+      {!isRestDay && hasSkippedToday && (
+        <div className="px-5 mt-6 pb-6 text-center">
+          <p className="font-caption text-text-tertiary">
+            Workout skipped for today
+          </p>
+        </div>
+      )}
 
       {/* Backdrop */}
       <div
