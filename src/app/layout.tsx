@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="h-full overflow-hidden flex flex-col">
+      <body className="h-full overflow-hidden flex flex-col pt-[env(safe-area-inset-top)]">
         <Providers>
           <div data-scroll-container className="flex-1 overflow-y-auto pb-20">{children}</div>
           <BottomNav />
