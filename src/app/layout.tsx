@@ -16,11 +16,21 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: "#000000",
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
   title: "Fitness",
   description: "Track your fitness journey",
+  applicationName: "Fitness",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Fitness",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export default function RootLayout({
@@ -35,7 +45,6 @@ export default function RootLayout({
           <div data-scroll-container className="flex-1 overflow-y-auto pb-20">{children}</div>
           <BottomNav />
         </Providers>
-        <BottomNav />
       </body>
     </html>
   );
