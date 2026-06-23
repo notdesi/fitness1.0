@@ -30,6 +30,7 @@ export interface Workout {
 
 interface WorkoutsContextValue {
   workouts: Workout[];
+  loaded: boolean;
   addWorkout: (workout: Omit<Workout, "id">) => void;
   updateWorkout: (id: number, data: Omit<Workout, "id">) => void;
   updateRecord: (id: number, recordType: RecordType, value: number) => void;
@@ -139,7 +140,7 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <WorkoutsContext.Provider value={{ workouts, addWorkout, updateWorkout, updateRecord, deleteWorkout, getHistory }}>
+    <WorkoutsContext.Provider value={{ workouts, loaded, addWorkout, updateWorkout, updateRecord, deleteWorkout, getHistory }}>
       {children}
     </WorkoutsContext.Provider>
   );

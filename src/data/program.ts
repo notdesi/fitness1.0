@@ -1,4 +1,4 @@
-import type { Schedule } from "@/context/ScheduleContext";
+import type { DayKey, Schedule } from "@/context/ScheduleContext";
 import type { Workout } from "@/context/WorkoutsContext";
 
 export const PROGRAM_SEED_VERSION = 1;
@@ -6,12 +6,45 @@ export const PROGRAM_SEED_KEY = "fitness-program-seed";
 
 export type ProgramDay = 1 | 2 | 3 | 4;
 
-export const PROGRAM_DAY_BY_WEEKDAY: Partial<Record<keyof Schedule, ProgramDay>> = {
+const PROGRAM_DAY_TO_WEEKDAY: Record<ProgramDay, DayKey> = {
+  1: "Mon",
+  2: "Tue",
+  3: "Wed",
+  4: "Thu",
+};
+
+export const PROGRAM_DAY_BY_WEEKDAY: Partial<Record<DayKey, ProgramDay>> = {
   Mon: 1,
   Tue: 2,
   Wed: 3,
   Thu: 4,
 };
+
+export type DayWorkouts = Record<DayKey, number[]>;
+
+export function emptyDayWorkouts(): DayWorkouts {
+  return { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] };
+}
+
+export function buildDefaultDayWorkouts(): DayWorkouts {
+  const result = emptyDayWorkouts();
+  DEFAULT_PROGRAM_WORKOUTS.forEach((w, i) => {
+    if (w.programDay) {
+      result[PROGRAM_DAY_TO_WEEKDAY[w.programDay]].push(i + 1);
+    }
+  });
+  return result;
+}
+
+export function buildDayWorkoutsFromWorkouts(workouts: Workout[]): DayWorkouts {
+  const result = emptyDayWorkouts();
+  for (const w of workouts) {
+    if (w.programDay && PROGRAM_DAY_TO_WEEKDAY[w.programDay]) {
+      result[PROGRAM_DAY_TO_WEEKDAY[w.programDay]].push(w.id);
+    }
+  }
+  return result;
+}
 
 export const DEFAULT_PROGRAM_SCHEDULE: Schedule = {
   Mon: "Upper",
@@ -69,21 +102,15 @@ export const DEFAULT_PROGRAM_WORKOUTS: WorkoutSeed[] = [
   w("Seated calf raise", "Lower", ["Calves"], 4),
 ];
 
-export function matchesProgramDay(
-  workout: Pick<Workout, "programDay">,
-  programDay: ProgramDay | null
-): boolean {
-  if (workout.programDay == null) return true;
-  return programDay === workout.programDay;
-}
-
 export function filterTodayWorkouts(
   workouts: Workout[],
   todayType: string,
-  programDay: ProgramDay | null
+  todayKey: DayKey,
+  dayWorkouts: DayWorkouts
 ): Workout[] {
   if (todayType === "Rest") return [];
-  return workouts.filter(
-    (w) => w.category === todayType && matchesProgramDay(w, programDay)
-  );
+  const byId = new Map(workouts.map((w) => [w.id, w]));
+  return (dayWorkouts[todayKey] ?? [])
+    .map((id) => byId.get(id))
+    .filter((w): w is Workout => w != null);
 }
