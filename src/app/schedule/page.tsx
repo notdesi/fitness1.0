@@ -4,12 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { useSchedule, type DayKey, type WorkoutType } from "@/context/ScheduleContext";
 
 const DAYS: DayKey[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const OPTIONS: WorkoutType[] = ["Push", "Pull", "Legs", "Rest"];
+const OPTIONS: WorkoutType[] = ["Upper", "Lower", "Rest"];
 
 const OPTION_COLORS: Record<string, string> = {
-  Push: "bg-text-primary text-bg-canvas",
-  Pull: "bg-text-primary text-bg-canvas",
-  Legs: "bg-text-primary text-bg-canvas",
+  Upper: "bg-text-primary text-bg-canvas",
+  Lower: "bg-text-primary text-bg-canvas",
   Rest: "bg-move-red-track text-move-red",
 };
 

@@ -1,13 +1,41 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import {
+  DEFAULT_PROGRAM_SCHEDULE,
+  PROGRAM_DAY_BY_WEEKDAY,
+  PROGRAM_SEED_KEY,
+  PROGRAM_SEED_VERSION,
+  type ProgramDay,
+} from "@/data/program";
 
 export const DAYS_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 const JS_DAY_MAP = [6, 0, 1, 2, 3, 4, 5] as const; // JS getDay() 0=Sun → index
 
 export type DayKey = (typeof DAYS_SHORT)[number];
-export type WorkoutType = "Push" | "Pull" | "Legs" | "Rest";
+export type WorkoutType = "Upper" | "Lower" | "Rest";
 export type Schedule = Record<DayKey, WorkoutType>;
+
+const DEFAULT_SCHEDULE: Schedule = DEFAULT_PROGRAM_SCHEDULE;
+
+const LEGACY_CATEGORY_MAP: Record<string, WorkoutType> = {
+  Push: "Upper",
+  Pull: "Upper",
+  Legs: "Lower",
+};
+
+function migrateWorkoutType(value: string): WorkoutType {
+  if (value === "Upper" || value === "Lower" || value === "Rest") return value;
+  return LEGACY_CATEGORY_MAP[value] ?? "Upper";
+}
+
+function migrateSchedule(schedule: Record<string, string>): Schedule {
+  const next = { ...DEFAULT_SCHEDULE };
+  for (const day of DAYS_SHORT) {
+    if (schedule[day]) next[day] = migrateWorkoutType(schedule[day]);
+  }
+  return next;
+}
 
 /** Rotate workout assignments one slot later among non-rest days; rest days stay Rest. */
 export function rotateScheduleForSkip(schedule: Schedule): Schedule {
@@ -36,21 +64,12 @@ export function rotateScheduleForSkipUnanchored(schedule: Schedule): Schedule {
   return next;
 }
 
-const DEFAULT_SCHEDULE: Schedule = {
-  Mon: "Push",
-  Tue: "Pull",
-  Wed: "Legs",
-  Thu: "Push",
-  Fri: "Pull",
-  Sat: "Legs",
-  Sun: "Rest",
-};
-
 interface ScheduleContextValue {
   schedule: Schedule;
   setDaySchedule: (day: DayKey, value: WorkoutType) => void;
   skipToday: () => void;
   todayType: WorkoutType;
+  todayProgramDay: ProgramDay | null;
   isRestDay: boolean;
   anchorRestDays: boolean;
   setAnchorRestDays: (value: boolean) => void;
@@ -67,9 +86,15 @@ export function ScheduleProvider({ children }: { children: ReactNode }) {
   const [anchorRestDays, setAnchorRestDays] = useState(true);
 
   useEffect(() => {
+    const shouldSeed =
+      localStorage.getItem(PROGRAM_SEED_KEY) !== String(PROGRAM_SEED_VERSION);
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setSchedule(JSON.parse(stored));
+      if (stored && !shouldSeed) {
+        setSchedule(migrateSchedule(JSON.parse(stored)));
+      } else if (shouldSeed) {
+        setSchedule(DEFAULT_PROGRAM_SCHEDULE);
+      }
     } catch {}
     try {
       const storedAnchor = localStorage.getItem(ANCHOR_REST_DAYS_KEY);
@@ -102,7 +127,9 @@ export function ScheduleProvider({ children }: { children: ReactNode }) {
   }
 
   const todayIndex = JS_DAY_MAP[new Date().getDay()];
-  const todayType = schedule[DAYS_SHORT[todayIndex]];
+  const todayKey = DAYS_SHORT[todayIndex];
+  const todayType = schedule[todayKey];
+  const todayProgramDay = PROGRAM_DAY_BY_WEEKDAY[todayKey] ?? null;
   const isRestDay = todayType === "Rest";
 
   return (
@@ -112,6 +139,7 @@ export function ScheduleProvider({ children }: { children: ReactNode }) {
         setDaySchedule,
         skipToday,
         todayType,
+        todayProgramDay,
         isRestDay,
         anchorRestDays,
         setAnchorRestDays,

@@ -5,14 +5,18 @@ import { WorkoutsProvider, useWorkouts } from "@/context/WorkoutsContext";
 import { StreakProvider } from "@/context/StreakContext";
 import type { ReactNode } from "react";
 
+import { filterTodayWorkouts } from "@/data/program";
+
 function StreakBridge({ children }: { children: ReactNode }) {
-  const { todayType } = useSchedule();
+  const { todayType, todayProgramDay } = useSchedule();
   const { workouts } = useWorkouts();
 
   const isRestDay = todayType === "Rest";
-  const todayRequiredIds = isRestDay
-    ? []
-    : workouts.filter((w) => w.category === todayType).map((w) => w.id);
+  const todayRequiredIds = filterTodayWorkouts(
+    workouts,
+    todayType,
+    todayProgramDay
+  ).map((w) => w.id);
 
   return (
     <StreakProvider todayRequiredIds={todayRequiredIds} isRestDay={isRestDay}>

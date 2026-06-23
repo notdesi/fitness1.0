@@ -2,6 +2,13 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 
+import {
+  DEFAULT_PROGRAM_WORKOUTS,
+  PROGRAM_SEED_KEY,
+  PROGRAM_SEED_VERSION,
+  type ProgramDay,
+} from "@/data/program";
+
 export type RecordType = "pr" | "reps";
 
 export interface RecordHistoryEntry {
@@ -15,6 +22,7 @@ export interface Workout {
   name: string;
   category: string;
   muscles: string[];
+  programDay?: ProgramDay;
   pr: number;
   reps: number;
   recordType: RecordType;
@@ -32,6 +40,12 @@ interface WorkoutsContextValue {
 const STORAGE_KEY = "fitness-workouts";
 const HISTORY_KEY = "fitness-record-history";
 
+function migrateCategory(category: string): string {
+  if (category === "Push" || category === "Pull") return "Upper";
+  if (category === "Legs") return "Lower";
+  return category;
+}
+
 const WorkoutsContext = createContext<WorkoutsContextValue | null>(null);
 
 export function WorkoutsProvider({ children }: { children: ReactNode }) {
@@ -41,12 +55,15 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
   const [history, setHistory] = useState<Record<number, RecordHistoryEntry[]>>({});
 
   useEffect(() => {
+    const shouldSeed =
+      localStorage.getItem(PROGRAM_SEED_KEY) !== String(PROGRAM_SEED_VERSION);
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
+      if (stored && !shouldSeed) {
         const parsed = JSON.parse(stored) as Workout[];
         const migrated = parsed.map((w) => ({
           ...w,
+          category: migrateCategory(w.category),
           pr: w.pr ?? 0,
           reps: w.reps ?? 0,
           recordType: w.recordType ?? "pr" as RecordType,
@@ -54,6 +71,14 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
         setWorkouts(migrated);
         const maxId = migrated.reduce((max, w) => Math.max(max, w.id), 0);
         setNextId(maxId + 1);
+      } else {
+        const seeded = DEFAULT_PROGRAM_WORKOUTS.map((w, i) => ({
+          ...w,
+          id: i + 1,
+        }));
+        setWorkouts(seeded);
+        setNextId(seeded.length + 1);
+        localStorage.setItem(PROGRAM_SEED_KEY, String(PROGRAM_SEED_VERSION));
       }
     } catch {}
     try {

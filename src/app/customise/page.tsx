@@ -4,13 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, X, DotsThreeOutlineVertical, PencilSimple, Trash } from "@phosphor-icons/react";
 import { useWorkouts, type Workout } from "@/context/WorkoutsContext";
 
-const CATEGORIES = ["Push", "Pull", "Legs"] as const;
+const CATEGORIES = ["Upper", "Lower"] as const;
 const ALL_CATEGORIES = ["All", ...CATEGORIES] as const;
 
 const MUSCLES: Record<string, string[]> = {
-  Push: ["Chest", "Triceps"],
-  Pull: ["Back", "Biceps", "Forearms"],
-  Legs: ["Leg", "Abs", "Shoulder"],
+  Upper: ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Forearms"],
+  Lower: ["Quads", "Hamstrings", "Glutes", "Calves", "Abs"],
 };
 
 export default function CustomisePage() {
@@ -18,7 +17,7 @@ export default function CustomisePage() {
   const [active, setActive] = useState<string>("All");
   const [panelOpen, setPanelOpen] = useState(false);
   const [workoutName, setWorkoutName] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("Push");
+  const [selectedCategory, setSelectedCategory] = useState<string>("Upper");
   const [selectedMuscles, setSelectedMuscles] = useState<string[]>([]);
   const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
@@ -74,7 +73,7 @@ export default function CustomisePage() {
     }
     setPanelOpen(false);
     setWorkoutName("");
-    setSelectedCategory("Push");
+    setSelectedCategory("Upper");
     setSelectedMuscles([]);
   }
 

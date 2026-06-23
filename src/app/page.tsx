@@ -5,6 +5,7 @@ import { X, CheckCircle } from "@phosphor-icons/react";
 import { StreakPill } from "@/components/ui/StreakPill";
 import { useSchedule } from "@/context/ScheduleContext";
 import { useWorkouts, type Workout, type RecordType } from "@/context/WorkoutsContext";
+import { filterTodayWorkouts } from "@/data/program";
 import { useStreak } from "@/context/StreakContext";
 
 const DAY_NAMES = [
@@ -42,7 +43,7 @@ function getToday() {
 
 export default function Home() {
   const { dateLabel } = getToday();
-  const { todayType, skipToday, isRestDay } = useSchedule();
+  const { todayType, todayProgramDay, skipToday, isRestDay } = useSchedule();
   const { workouts, updateRecord } = useWorkouts();
   const { streak, toggleComplete, isComplete, hasSkippedToday, markSkipped } =
     useStreak();
@@ -51,10 +52,7 @@ export default function Home() {
   const [recordInput, setRecordInput] = useState("");
   const [confirmSkip, setConfirmSkip] = useState(false);
 
-  const todayWorkouts =
-    todayType === "Rest"
-      ? []
-      : workouts.filter((w) => w.category === todayType);
+  const todayWorkouts = filterTodayWorkouts(workouts, todayType, todayProgramDay);
 
   function openRecordPanel(workout: Workout) {
     setEditingWorkout(workout);
