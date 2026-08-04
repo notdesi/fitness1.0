@@ -4,7 +4,7 @@ import {
   Barbell,
   SlidersHorizontal,
   CalendarBlank,
-  UserCircle,
+  Pulse,
 } from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { href: "/", label: "Workout", icon: Barbell },
   { href: "/schedule", label: "Schedule", icon: CalendarBlank },
   { href: "/customise", label: "Customise", icon: SlidersHorizontal },
-  { href: "/account", label: "Account", icon: UserCircle },
+  { href: "/summary", label: "Summary", icon: Pulse },
 ] as const;
 
 export function BottomNav() {

@@ -3,6 +3,7 @@
 import { ScheduleProvider, useSchedule } from "@/context/ScheduleContext";
 import { WorkoutsProvider, useWorkouts } from "@/context/WorkoutsContext";
 import { StreakProvider } from "@/context/StreakContext";
+import { WeightProvider } from "@/context/WeightContext";
 import { useEffect, type ReactNode } from "react";
 
 import { emptyDayWorkouts, filterTodayWorkouts } from "@/data/program";
@@ -43,8 +44,10 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <ScheduleProvider>
       <WorkoutsProvider>
-        <DayWorkoutsInit />
-        <StreakBridge>{children}</StreakBridge>
+        <WeightProvider>
+          <DayWorkoutsInit />
+          <StreakBridge>{children}</StreakBridge>
+        </WeightProvider>
       </WorkoutsProvider>
     </ScheduleProvider>
   );
