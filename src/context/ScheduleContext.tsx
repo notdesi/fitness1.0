@@ -102,6 +102,7 @@ interface ScheduleContextValue {
   setDaySchedule: (day: DayKey, value: WorkoutType) => void;
   setDayWorkouts: (day: DayKey, workoutIds: number[]) => void;
   toggleDayWorkout: (day: DayKey, workoutId: number) => void;
+  swapDays: (a: DayKey, b: DayKey) => void;
   initDayWorkoutsFromWorkouts: (workouts: { id: number; programDay?: number }[]) => void;
   skipToday: () => void;
   todayType: WorkoutType;
@@ -189,6 +190,15 @@ export function ScheduleProvider({ children }: { children: ReactNode }) {
     });
   }
 
+  function swapDays(a: DayKey, b: DayKey) {
+    if (a === b) return;
+    setSchedule((prev) => ({ ...prev, [a]: prev[b], [b]: prev[a] }));
+    setDayWorkoutsState((prev) => {
+      const current = prev ?? emptyDayWorkouts();
+      return { ...current, [a]: current[b], [b]: current[a] };
+    });
+  }
+
   function initDayWorkoutsFromWorkouts(
     workouts: { id: number; programDay?: number }[]
   ) {
@@ -232,6 +242,7 @@ export function ScheduleProvider({ children }: { children: ReactNode }) {
         setDaySchedule,
         setDayWorkouts,
         toggleDayWorkout,
+        swapDays,
         initDayWorkoutsFromWorkouts,
         skipToday,
         todayType,
